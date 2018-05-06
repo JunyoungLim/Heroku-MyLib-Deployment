@@ -19,6 +19,9 @@ The third feature of the backend is inverted indexing. More details about invert
 
 ![alt text](https://qph.fs.quoracdn.net/main-qimg-64eb40af5510bc3e201726674197b3dc-c)
 
+To make query search more efficient, we inverted image -> text to text -> image indexing, so that whenever a user inputs a query, we can directly map the query to a list of images associated with it. To permanently maintain the indexing dictionary, we serialized the object and stored it into the database; wenever there needs an update to the dictionary, it gets deserialized, updated, and re-serialized and then committed to the database.
+
 ## Server Address
 Staging Server: https://cuappdev-mylib-2018-stage.herokuapp.com/
+
 Production Server: https://cuappdev-mylib-2018-pro.herokuapp.com/

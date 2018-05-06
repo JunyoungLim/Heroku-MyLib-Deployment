@@ -56,10 +56,10 @@ def delete_collection():
   if inv_index_entry:
     inv_index = pickle.loads(inv_index_entry.index)
   else:
-    inv_index = Index()
-    db.session.add(inv_index)
+    inv_index_entry = Index()
+    db.session.add(inv_index_entry)
     db.session.commit()
-    inv_index = inv_index.index
+    inv_index = inv_index_entry.index
     inv_index = pickle.loads(inv_index)
 
   collection = Collection.query.filter_by(title=collection_title).first()
@@ -86,10 +86,10 @@ def delete_all_collection():
   if inv_index_entry:
     inv_index = pickle.loads(inv_index_entry.index)
   else:
-    inv_index = Index()
-    db.session.add(inv_index)
+    inv_index_entry = Index()
+    db.session.add(inv_index_entry)
     db.session.commit()
-    inv_index = inv_index.index
+    inv_index = inv_index_entry.index
     inv_index = pickle.loads(inv_index)
 
   inv_index.clear()

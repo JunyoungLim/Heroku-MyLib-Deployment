@@ -31,6 +31,6 @@ POST: https://cuappdev-mylib-2018-pro.herokuapp.com/mylib/images?title=curious.p
 
 The above request will insert the image with the following image uri.
 
-GET: https://cuappdev-mylib-2018-pro.herokuapp.com/mylib/images?keyword=curiious
+GET: https://cuappdev-mylib-2018-pro.herokuapp.com/mylib/images?keyword=curious
 
 The above request will retrieve all the images that are associated with query "curious."

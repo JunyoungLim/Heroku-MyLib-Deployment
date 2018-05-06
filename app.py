@@ -5,23 +5,13 @@ import os
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
-from marshmallow_sqlalchemy import field_for, ModelSchema
-from models import *
+app.register_blueprint(image_blueprint)
+app.register_blueprint(collection_blueprint)
 
-class CollectionSchema(ModelSchema):
-    class Meta:
-      model = Collection
-
-class ImageSchema(ModelSchema):
-    class Meta(ModelSchema.Meta):
-        model = Image
-
-collection_schema = CollectionSchema()
-image_schema = ImageSchema()
-
+from models import Image, Collection
 
 @app.route('/')
 def hello():

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 103c5dff59c3
+Revision ID: 728fac21a883
 Revises: 
-Create Date: 2018-05-05 23:58:37.493775
+Create Date: 2018-05-06 05:30:03.314404
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '103c5dff59c3'
+revision = '728fac21a883'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,17 +24,21 @@ def upgrade():
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('id')
+    sa.UniqueConstraint('id'),
+    sa.UniqueConstraint('title')
     )
     op.create_table('images',
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
+    sa.Column('text', sa.String(), nullable=True),
+    sa.Column('label', sa.String(), nullable=True),
     sa.Column('collection_id', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['collection_id'], ['collections.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('id')
+    sa.UniqueConstraint('id'),
+    sa.UniqueConstraint('title')
     )
     # ### end Alembic commands ###
 

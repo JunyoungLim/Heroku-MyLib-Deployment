@@ -14,6 +14,7 @@ LABEL_DETECTION = 'LABEL_DETECTION'
 ###############################################################################
 # OCR module based on Google ML Vision API
 # Support the following modes: "text", "label"
+# The feed is assumed to be encoded in base64
 ###############################################################################
 
 class OCR():
@@ -21,13 +22,16 @@ class OCR():
         """
         Constructor
         """
-        if mode == "text":
-            self.mode = TEXT_DETECTION
-        else:
+        if mode == "label":
             self.mode = LABEL_DETECTION
+        else:
+            self.mode = TEXT_DETECTION
     
-    def _feed(self, images):
-        return images
+    def set_mode(self, mode):
+        if mode == "label":
+            self.mode = LABEL_DETECTION
+        elif mode == "text":
+            self.mode = TEXT_DETECTION
 
     def _feed_filenames(self, image_filenames):
         img_64 = []
@@ -61,11 +65,22 @@ class OCR():
         else:
             texts = []
             for ind, res in enumerate(response.json()['responses']):
+                print response
                 texts += [res['textAnnotations'][0]['description']]
             return texts
     
-    def feed_and_extract(self, images):
-        images_list = self._feed(images)
+    def feed_and_extract(self, image_encoded):
+        images_list = self._feed_base64(image_encoded)
         return self._extract(images_list)
+    
+    def extract_text_and_label(self, image_encoded):
+        images_list = self._feed_base64(image_encoded)
+        self.mode = LABEL_DETECTION
+        labels = self._extract(images_list)
+        self.mode = TEXT_DETECTION
+        texts = self._extract(images_list)
+        return texts, labels
 
-# os.stat("4.png").st_size / 1024.0 / 1024.0
+
+# Create an OCR instance
+ocr = OCR()

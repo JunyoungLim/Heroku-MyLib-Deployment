@@ -7,7 +7,9 @@ class Image(Base):
     __tablename__ = 'images'
     
     id             = db.Column(db.String, unique=True, primary_key=True)
-    title          = db.Column(db.String, nullable=False)
+    title          = db.Column(db.String, unique=True, nullable=False)
+    text           = db.Column(db.String, nullable=True)
+    label          = db.Column(db.String, nullable=True)
     collection_id  = db.Column(db.String, db.ForeignKey('collections.id'), nullable=True)
     
     def __init__(self, title):
@@ -16,6 +18,8 @@ class Image(Base):
         """
         self.id = str(uuid.uuid1())
         self.title = title
+        self.text = ""
+        self.label = ""
         self.collection_id = None
     
     def __repr__(self):

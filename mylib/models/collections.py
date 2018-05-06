@@ -7,8 +7,8 @@ class Collection(Base):
     __tablename__ = 'collections'
     
     id             = db.Column(db.String, unique=True, primary_key=True)
-    title          = db.Column(db.String, nullable=False)
-    images         = db.relationship('Image', backref='collections', lazy=True)
+    title          = db.Column(db.String, unique=True, nullable=False)
+    images         = db.relationship('Image', cascade="all,delete", backref='collections', lazy=True)
     
     def __init__(self, title):
         """

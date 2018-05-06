@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 import os
 
@@ -13,12 +13,11 @@ app.register_blueprint(mylib)
 
 @app.route('/')
 def hello():
-    return "Hello World!"
+    return render_template("index.html")
 
-
-@app.route('/<name>')
-def hello_name(name):
-    return "Hello {}!".format(name)
+@app.errorhandler(404)
+def not_found(error):
+  return render_template('404.html'), 404
 
 if __name__ == '__main__':
     app.run()

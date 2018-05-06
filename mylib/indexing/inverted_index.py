@@ -30,9 +30,10 @@ class InvIndex:
         return word
 
     def lookup(self, word):
-        if self.index:
-            word = self.process(word)
-            return [id in self.index.get(word)]
+        word = self.process(word)
+        lst = self.index.get(word)
+        if lst:
+            return [id in lst]
         else:
             return []
     

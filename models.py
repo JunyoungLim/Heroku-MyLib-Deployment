@@ -1,19 +1,52 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSON
+import uuid
 
+class Base(db.Model):
+  """
+  Base database model
+  """
+  __abstract__ = True
+  created_at = db.Column(db.DateTime, default = db.func.current_timestamp())
+  updated_at = db.Column(db.DateTime, default = db.func.current_timestamp())
 
-class Result(db.Model):
-    __tablename__ = 'results'
+class Image(Base):
+    __tablename__ = 'images'
+    
+    id             = db.Column(db.Integer, unique=True, primary_key=True)
+    title          = db.Column(db.String(), nullable=False)
+    collection_id  = db.Column(db.Integer, db.ForeignKey('collections.id'), nullable=False)
+    
+    def __init__(self, title):
+        """
+        Constructor
+        """
+        self.id = str(uuid.uuid1())
+        self.title = title
+        self.collection_id = None
+    
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+        
+    def has_collection(self):
+        if (self.collection_id is None):
+            return False
+        return True
 
-    id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String())
-    result_all = db.Column(JSON)
-    result_no_stop_words = db.Column(JSON)
-
-    def __init__(self, url, result_all, result_no_stop_words):
-        self.url = url
-        self.result_all = result_all
-        self.result_no_stop_words = result_no_stop_words
-
+class Collection(Base):
+    __tablename__ = 'images'
+    
+    id             = db.Column(db.Integer, unique=True, primary_key=True)
+    title          = db.Column(db.String(), nullable=False)
+    images         = db.relationship('Image', backref='collections', lazy=True)
+    
+    def __init__(self, title):
+        """
+        Constructor
+        """
+        self.id = str(uuid.uuid1())
+        self.title = title
+        self.images = []
+    
     def __repr__(self):
         return '<id {}>'.format(self.id)

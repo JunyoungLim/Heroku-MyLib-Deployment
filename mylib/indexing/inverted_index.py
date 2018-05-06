@@ -3,7 +3,7 @@ from collections import defaultdict
 from nltk.stem.snowball import EnglishStemmer
 
 # download punkt sentence tokenizer
-nltk.download('punkt')
+nltk.download()
  
 ###############################################################################
 # Inverted Index Data Structure

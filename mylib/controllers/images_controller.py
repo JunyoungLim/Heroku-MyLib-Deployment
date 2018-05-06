@@ -14,17 +14,19 @@ def insert_image():
   image = Image(title)
 
   if Image.query.filter_by(title=title).first():
-    return jsonify({"success": "false"})
+    return jsonify({"message": "Image title already taken."})
 
   inv_index_entry = Index.query.filter_by(id="inv_index").first()
   if inv_index_entry:
     inv_index = pickle.loads(inv_index_entry.index)
   else:
-    inv_index = Index()
-    db.session.add(inv_index)
+    inv_index_entry = Index()
+    db.session.add(inv_index_entry)
     db.session.commit()
-    inv_index = inv_index.index
+    inv_index = inv_index_entry.index
     inv_index = pickle.loads(inv_index)
+  
+  inv_index.add(title, image.id)
 
   text_extracted, label_extracted = ocr.extract_text_and_label([content])
   if text_extracted:
@@ -51,10 +53,10 @@ def get_image():
   if inv_index_entry:
     inv_index = pickle.loads(inv_index_entry.index)
   else:
-    inv_index = Index()
-    db.session.add(inv_index)
+    inv_index_entry = Index()
+    db.session.add(inv_index_entry)
     db.session.commit()
-    inv_index = inv_index.index
+    inv_index = inv_index_entry.index
     inv_index = pickle.loads(inv_index)
 
   id_list = inv_index.lookup(keyword)
@@ -119,17 +121,42 @@ def delete_image():
   if inv_index_entry:
     inv_index = pickle.loads(inv_index_entry.index)
   else:
-    inv_index = Index()
-    db.session.add(inv_index)
+    inv_index_entry = Index()
+    db.session.add(inv_index_entry)
     db.session.commit()
-    inv_index = inv_index.index
+    inv_index = inv_index_entry.index
     inv_index = pickle.loads(inv_index)
 
   inv_index.remove(image.text, image.id)
   inv_index.remove(image.label, image.id)
+  inv_index.remove(image.title, image.id)
 
   inv_index = pickle.dumps(inv_index)
   inv_index_entry.index = inv_index
   db.session.commit()
 
   return jsonify(image_schema.dump(image).data)
+
+@mylib.route('/images/all', methods=['DELETE'])
+def delete_all_image():
+  image = Image.query.delete()
+  db.session.commit()
+
+  inv_index_entry = Index.query.filter_by(id="inv_index").first()
+  if inv_index_entry:
+    inv_index = pickle.loads(inv_index_entry.index)
+  else:
+    inv_index_entry = Index()
+    db.session.add(inv_index_entry)
+    db.session.commit()
+    inv_index = inv_index_entry.index
+    inv_index = pickle.loads(inv_index)
+
+  inv_index.clear()
+
+  inv_index = pickle.dumps(inv_index)
+  inv_index_entry.index = inv_index
+  db.session.commit()
+
+  return jsonify({"success":"true"})
+

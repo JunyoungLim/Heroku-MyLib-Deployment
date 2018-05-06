@@ -45,8 +45,8 @@ class InvIndex:
 
             if token in self.stopwords:
                 continue
-            
-            self.index[token].remove(document_id)
+            if document_id in self.index[token]:
+                self.index[token].remove(document_id)
 
     def add(self, text, document_id):
         for token in [t for t in self.tokenizer(text)]:

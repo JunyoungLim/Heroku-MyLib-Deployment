@@ -78,7 +78,7 @@ class OCR():
         else:
             texts = []
             for ind, res in enumerate(response.json()['responses']):
-                if res:
+                if 'textAnnotations' in res:
                     texts += [res['textAnnotations'][0]['description']]
             return texts
     
@@ -91,7 +91,8 @@ class OCR():
         else:
             labels = []
             for ind, res in enumerate(response.json()['responses']):
-                if res:
+                if 'labelAnnotations' in res:
+                    print "\n\n\n\n" + str(res)
                     labels += [res['labelAnnotations'][0]['description']]
             return labels
     

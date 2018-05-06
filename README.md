@@ -25,3 +25,12 @@ To make query search more efficient, we inverted image -> text to text -> image 
 Staging Server: https://cuappdev-mylib-2018-stage.herokuapp.com/
 
 Production Server: https://cuappdev-mylib-2018-pro.herokuapp.com/
+
+## Example API Request
+POST: https://cuappdev-mylib-2018-pro.herokuapp.com/mylib/images?title=curious.png&content=https://i.stack.imgur.com/vrkIj.png
+
+The above request will insert the image with the following image uri.
+
+GET: https://cuappdev-mylib-2018-pro.herokuapp.com/mylib/images?keyword=curiious
+
+The above request will retrieve all the images that are associated with query "curious."

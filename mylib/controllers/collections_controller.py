@@ -10,6 +10,9 @@ from mylib.indexing.inverted_index import inv_index
 def insert_collection():
     title = request.args.get('title')
 
+    if Collection.query.filter_by(title=title).first():
+        return jsonify({"success": "false"})
+
     collection = Collection(title)
     db.session.add(collection)
     db.session.commit()

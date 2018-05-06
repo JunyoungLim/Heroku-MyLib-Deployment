@@ -41,22 +41,35 @@ class OCR():
                 img_64 += [img_coded]
         return img_64
     
+    def _feed_uri(self, image_uri):
+        return self._create_image_data_uri(image_uri)
+
     def _feed_base64(self, image_encoded):
         return self._create_image_data_base64(image_encoded)
     
+    def _create_image_data_uri(self, image_uri):
+        img_requests = []
+        for img in image_uri:
+            img_requests.append({
+                    'image': {'source': {'imageUri': img}},
+                    'features': [{
+                        'type': self.mode
+                    }]
+            })
+        return img_requests
+
     def _create_image_data_base64(self, image_encoded):
         img_requests = []
         for img_64 in image_encoded:
             img_requests.append({
                     'image': {'content': img_64},
                     'features': [{
-                        'type': self.mode,
-                        'maxResults': 1
+                        'type': self.mode
                     }]
             })
         return img_requests
     
-    def _extract(self, images_list):
+    def _extract_text(self, images_list):
         img_json = json.dumps({"requests": images_list }).encode()
         response = requests.post(ENDPOINT_URL, data=img_json, params={'key': API_KEY},
                                 headers={'Content-Type': 'application/json'})
@@ -65,20 +78,34 @@ class OCR():
         else:
             texts = []
             for ind, res in enumerate(response.json()['responses']):
-                print response
-                texts += [res['textAnnotations'][0]['description']]
+                if res:
+                    texts += [res['textAnnotations'][0]['description']]
             return texts
     
-    def feed_and_extract(self, image_encoded):
-        images_list = self._feed_base64(image_encoded)
-        return self._extract(images_list)
+    def _extract_label(self, images_list):
+        img_json = json.dumps({"requests": images_list }).encode()
+        response = requests.post(ENDPOINT_URL, data=img_json, params={'key': API_KEY},
+                                headers={'Content-Type': 'application/json'})
+        if response.status_code != 200 or response.json().get('error'):
+            return [""]
+        else:
+            labels = []
+            for ind, res in enumerate(response.json()['responses']):
+                if res:
+                    labels += [res['labelAnnotations'][0]['description']]
+            return labels
     
-    def extract_text_and_label(self, image_encoded):
-        images_list = self._feed_base64(image_encoded)
+    def feed_and_extract(self, image_uri):
+        images_list = self._feed_uri(image_uri)
+        return self._extract_text(images_list)
+    
+    def extract_text_and_label(self, image_uri):
         self.mode = LABEL_DETECTION
-        labels = self._extract(images_list)
+        images_list = self._feed_uri(image_uri)
+        labels = self._extract_label(images_list)
         self.mode = TEXT_DETECTION
-        texts = self._extract(images_list)
+        images_list = self._feed_uri(image_uri)
+        texts = self._extract_text(images_list)
         return texts, labels
 
 

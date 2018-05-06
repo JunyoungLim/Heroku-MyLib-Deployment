@@ -30,8 +30,11 @@ class InvIndex:
         return word
 
     def lookup(self, word):
-        word = self.process(word)
-        return [id in self.index.get(word)]
+        if self.index:
+            word = self.process(word)
+            return [id in self.index.get(word)]
+        else:
+            return []
     
     def remove(self, text, document_id):
         for token in [t for t in self.tokenizer(text)]:

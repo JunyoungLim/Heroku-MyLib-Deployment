@@ -12,12 +12,16 @@ def insert_image():
 
   image = Image(title)
 
-  text_extracted, label_extracted = ocr.extract_text_and_label([content])
-  inv_index.add(text_extracted[0], image.id)
-  inv_index.add(label_extracted[0], image.id)
+  if Image.query.filter_by(title=title).first():
+    return jsonify({"success": "false"})
 
-  image.text = text_extracted[0]
-  image.label = label_extracted[0]
+  text_extracted, label_extracted = ocr.extract_text_and_label([content])
+  if text_extracted:
+    inv_index.add(text_extracted[0], image.id)
+    image.text = text_extracted[0]
+  if label_extracted:
+    inv_index.add(label_extracted[0], image.id)
+    image.label = label_extracted[0]
 
   db.session.add(image)
   db.session.commit()
@@ -26,20 +30,25 @@ def insert_image():
 
 @mylib.route('/images', methods=['GET'])
 def get_image():
-  title = request.args.get('title')
+  keyword = request.args.get('keyword')
 
-  image = Image.query.filter_by(title=title).first()
+  id_list = inv_index.lookup(keyword)
 
-  return jsonify(image_schema.dump(image).data)
+  ret = []
+  for img_id in id_list:
+    img = Image.query.filter_by(id=img_id).first()
+    ret += [image_schema.dump(img).data]
+
+  return jsonify(ret)
 
 @mylib.route('/images/all', methods=['GET'])
 def get_all_image():
-  title = request.args.get('title')
-
   images = Image.query.all()
 
-  return jsonify(image_schema.dump(images).data)
-
+  ret = []
+  for img in images:
+    ret += [image_schema.dump(img).data]
+  return jsonify(ret)
 
 @mylib.route('/images', methods=['PUT'])
 def update_image():

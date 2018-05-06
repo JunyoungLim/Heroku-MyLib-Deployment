@@ -38,7 +38,14 @@ def delete_collection():
   collection_title = request.args.get('title')
 
   inv_index_entry = Index.query.filter_by(id="inv_index").first()
-  inv_index = pickle.loads(inv_index_entry.index)
+  if inv_index_entry:
+    inv_index = pickle.loads(inv_index_entry.index)
+  else:
+    inv_index = Index()
+    db.session.add(inv_index)
+    db.session.commit()
+    inv_index = inv_index.index
+    inv_index = pickle.loads(inv_index)
 
   collection = Collection.query.filter_by(title=collection_title).first()
   for image in collection.images:

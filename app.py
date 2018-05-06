@@ -1,6 +1,5 @@
 from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
-from mylib.indexing.inverted_index import Index
 import os
 
 
@@ -14,9 +13,6 @@ app.register_blueprint(mylib)
 
 @app.route('/')
 def hello():
-    inv_index = Index()
-    db.session.add(inv_index)
-    db.session.commit()
     return render_template("index.html")
 
 @app.errorhandler(404)

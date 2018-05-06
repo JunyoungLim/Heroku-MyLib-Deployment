@@ -35,7 +35,7 @@ class InvIndex:
         word = self.process(word)
         lst = self.index.get(word)
         if lst:
-            return [id in lst]
+            return [id for id in lst]
         else:
             return []
     
@@ -73,3 +73,4 @@ class Index(db.Model):
               EnglishStemmer(), 
               nltk.corpus.stopwords.words('english'))
         self.index = pickle.dumps(inv_index)
+

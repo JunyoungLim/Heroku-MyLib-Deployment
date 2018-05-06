@@ -17,7 +17,14 @@ def insert_image():
     return jsonify({"success": "false"})
 
   inv_index_entry = Index.query.filter_by(id="inv_index").first()
-  inv_index = pickle.loads(inv_index_entry.index)
+  if inv_index_entry:
+    inv_index = pickle.loads(inv_index_entry.index)
+  else:
+    inv_index = Index()
+    db.session.add(inv_index)
+    db.session.commit()
+    inv_index = inv_index.index
+    inv_index = pickle.loads(inv_index)
 
   text_extracted, label_extracted = ocr.extract_text_and_label([content])
   if text_extracted:
@@ -41,7 +48,14 @@ def get_image():
   keyword = request.args.get('keyword')
 
   inv_index_entry = Index.query.filter_by(id="inv_index").first()
-  inv_index = pickle.loads(inv_index_entry.index)
+  if inv_index_entry:
+    inv_index = pickle.loads(inv_index_entry.index)
+  else:
+    inv_index = Index()
+    db.session.add(inv_index)
+    db.session.commit()
+    inv_index = inv_index.index
+    inv_index = pickle.loads(inv_index)
 
   id_list = inv_index.lookup(keyword)
 
@@ -49,7 +63,6 @@ def get_image():
   inv_index_entry.index = inv_index
   db.session.commit()
 
-  print id_list
   ret = []
   for img_id in id_list:
     img = Image.query.filter_by(id=img_id).first()
@@ -103,7 +116,14 @@ def delete_image():
   db.session.commit()
 
   inv_index_entry = Index.query.filter_by(id="inv_index").first()
-  inv_index = pickle.loads(inv_index_entry.index)
+  if inv_index_entry:
+    inv_index = pickle.loads(inv_index_entry.index)
+  else:
+    inv_index = Index()
+    db.session.add(inv_index)
+    db.session.commit()
+    inv_index = inv_index.index
+    inv_index = pickle.loads(inv_index)
 
   inv_index.remove(image.text, image.id)
   inv_index.remove(image.label, image.id)

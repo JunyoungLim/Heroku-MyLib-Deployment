@@ -2,7 +2,7 @@ import nltk
 from collections import defaultdict
 from nltk.stem.snowball import EnglishStemmer
 from app import db
-from base64 import b64encode
+import pickle
 
 # download punkt sentence tokenizer
 nltk.download('punkt')
@@ -72,4 +72,4 @@ class Index(db.Model):
         inv_index = InvIndex(nltk.word_tokenize, 
               EnglishStemmer(), 
               nltk.corpus.stopwords.words('english'))
-        self.index = b64encode(inv_index)
+        self.index = pickle.dumps(inv_index)

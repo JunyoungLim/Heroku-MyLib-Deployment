@@ -4,7 +4,7 @@ from mylib.models.images import *
 from mylib.models.collections import *
 from mylib.ocr.google_vis import ocr
 from mylib.indexing.inverted_index import *
-from base64 import b64encode
+import pickle
 
 @mylib.route('/images', methods=['POST'])
 def insert_image():
@@ -17,7 +17,7 @@ def insert_image():
     return jsonify({"success": "false"})
 
   inv_index_entry = Index.query.filter_by(id="inv_index").first()
-  inv_index = inv_index_entry.index.decode("base64")
+  inv_index = pickle.loads(inv_index_entry.index)
 
   text_extracted, label_extracted = ocr.extract_text_and_label([content])
   if text_extracted:
@@ -29,7 +29,7 @@ def insert_image():
 
   db.session.add(image)
 
-  inv_index = b64encode(inv_index)
+  inv_index = pickle.dumps(inv_index)
   inv_index_entry.index = inv_index
 
   db.session.commit()
@@ -41,11 +41,11 @@ def get_image():
   keyword = request.args.get('keyword')
 
   inv_index_entry = Index.query.filter_by(id="inv_index").first()
-  inv_index = inv_index_entry.index.decode("base64")
+  inv_index = pickle.loads(inv_index_entry.index)
 
   id_list = inv_index.lookup(keyword)
 
-  inv_index = b64encode(inv_index)
+  inv_index = pickle.dumps(inv_index)
   inv_index_entry.index = inv_index
   db.session.commit()
 
@@ -103,12 +103,12 @@ def delete_image():
   db.session.commit()
 
   inv_index_entry = Index.query.filter_by(id="inv_index").first()
-  inv_index = inv_index_entry.index.decode("base64")
+  inv_index = pickle.loads(inv_index_entry.index)
 
   inv_index.remove(image.text, image.id)
   inv_index.remove(image.label, image.id)
 
-  inv_index = b64encode(inv_index)
+  inv_index = pickle.dumps(inv_index)
   inv_index_entry.index = inv_index
   db.session.commit()
 

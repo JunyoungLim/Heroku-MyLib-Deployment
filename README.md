@@ -19,3 +19,6 @@ The third feature of the backend is inverted indexing. More details about invert
 
 ![alt text](https://qph.fs.quoracdn.net/main-qimg-64eb40af5510bc3e201726674197b3dc-c)
 
+## Server Address
+Staging Server: https://cuappdev-mylib-2018-stage.herokuapp.com/
+Production Server: https://cuappdev-mylib-2018-pro.herokuapp.com/

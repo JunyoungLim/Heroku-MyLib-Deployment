@@ -1,6 +1,8 @@
 import nltk
 from collections import defaultdict
 from nltk.stem.snowball import EnglishStemmer
+from app import db
+from base64 import b64encode
 
 # download punkt sentence tokenizer
 nltk.download('punkt')
@@ -13,7 +15,7 @@ nltk.download('stopwords')
 ###############################################################################
 
 class InvIndex:
-    def __init__(self, tokenizer, stemmer=None, stopwords=None):
+    def __init__(self, tokenizer=nltk.word_tokenize, stemmer=None, stopwords=None):
         self.tokenizer = tokenizer
         self.stemmer = stemmer
         self.stopwords = set(stopwords) if stopwords else set()
@@ -55,9 +57,19 @@ class InvIndex:
 
             if document_id not in self.index[token]:
                 self.index[token].append(document_id)
-    
 
-# Inverse Indexing initialized
-inv_index = InvIndex(nltk.word_tokenize, 
+class Index(db.Model):
+    __tablename__ = 'indices'
+    id           = db.Column(db.String, unique=True, primary_key=True)
+    index        = db.Column(db.String)
+    
+    def __init__(self):
+        """
+        Constructor
+        """
+        self.id = "inv_index"
+
+        inv_index = InvIndex(nltk.word_tokenize, 
               EnglishStemmer(), 
               nltk.corpus.stopwords.words('english'))
+        self.index = b64encode(inv_index)

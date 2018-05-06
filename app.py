@@ -9,10 +9,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
 from mylib import mylib as mylib
+from mylib.indexing.inverted_index import *
 app.register_blueprint(mylib)
 
 @app.route('/')
 def hello():
+    inv_index = InvIndex()
+    db.session.add(inv_index)
+    db.session.commit()
     return render_template("index.html")
 
 @app.errorhandler(404)

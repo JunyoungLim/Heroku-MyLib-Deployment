@@ -3,7 +3,8 @@ from flask import request, jsonify
 from mylib.models.images import *
 from mylib.models.collections import *
 from mylib.ocr.google_vis import ocr
-from mylib.indexing.inverted_index import inv_index
+from mylib.indexing.inverted_index import *
+from base64 import b64encode
 
 @mylib.route('/images', methods=['POST'])
 def insert_image():
@@ -15,6 +16,9 @@ def insert_image():
   if Image.query.filter_by(title=title).first():
     return jsonify({"success": "false"})
 
+  inv_index_entry = Index.query.filter_by(id="inv_index").first()
+  inv_index = inv_index_entry.index.decode("base64")
+
   text_extracted, label_extracted = ocr.extract_text_and_label([content])
   if text_extracted:
     inv_index.add(text_extracted[0], image.id)
@@ -24,6 +28,10 @@ def insert_image():
     image.label = label_extracted[0]
 
   db.session.add(image)
+
+  inv_index = b64encode(inv_index)
+  inv_index_entry.index = inv_index
+
   db.session.commit()
 
   return jsonify(image_schema.dump(image).data)
@@ -32,8 +40,16 @@ def insert_image():
 def get_image():
   keyword = request.args.get('keyword')
 
+  inv_index_entry = Index.query.filter_by(id="inv_index").first()
+  inv_index = inv_index_entry.index.decode("base64")
+
   id_list = inv_index.lookup(keyword)
 
+  inv_index = b64encode(inv_index)
+  inv_index_entry.index = inv_index
+  db.session.commit()
+
+  print id_list
   ret = []
   for img_id in id_list:
     img = Image.query.filter_by(id=img_id).first()
@@ -86,7 +102,14 @@ def delete_image():
   db.session.delete(image)
   db.session.commit()
 
+  inv_index_entry = Index.query.filter_by(id="inv_index").first()
+  inv_index = inv_index_entry.index.decode("base64")
+
   inv_index.remove(image.text, image.id)
   inv_index.remove(image.label, image.id)
+
+  inv_index = b64encode(inv_index)
+  inv_index_entry.index = inv_index
+  db.session.commit()
 
   return jsonify(image_schema.dump(image).data)

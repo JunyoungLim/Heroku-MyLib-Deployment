@@ -4,7 +4,7 @@ from mylib.controllers import *
 from mylib.models.all import *
 from mylib.models.images import *
 from mylib.models.collections import *
-from mylib.indexing.inverted_index import inv_index
+from mylib.indexing.inverted_index import *
 
 @mylib.route('/collections', methods=['POST'])
 def insert_collection():

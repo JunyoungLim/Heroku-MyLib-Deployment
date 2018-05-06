@@ -1,8 +1,8 @@
-from app.constants import *
 from . import *
-from flask import request
-from app.mylib.models.images import *
-from app.mylib.models.collections import *
+from flask import request, jsonify
+from mylib import *
+from mylib.models.images import *
+from mylib.models.collections import *
 
 @mylib.route('/images', methods=['POST'])
 def insert_image():
@@ -12,7 +12,7 @@ def insert_image():
   db.session.add(image)
   db.session.commit()
 
-  return image_schema.dump(image).data
+  return jsonify(image_schema.dump(image).data)
 
 @mylib.route('/images', methods=['PUT'])
 def update_collection_for_image():
@@ -20,11 +20,11 @@ def update_collection_for_image():
   image_id = request.args.get('image_id')
 
   collection = Collection.query.filter_by(id=collection_id).first()
-  collection.images += [image_id]
+  collection.images += [Image.query.filter_by(id=image_id).first()]
   
   image = Image.query.filter_by(id=image_id).first()
   image.collection_id = collection_id
 
   db.session.commit()
 
-  return image_schema.dump(image).data
+  return jsonify(image_schema.dump(image).data)

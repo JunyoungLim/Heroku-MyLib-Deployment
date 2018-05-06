@@ -1,7 +1,6 @@
-from app.constants import *
 from . import *
-from app.mylib.models.images import *
-from app.mylib.models.collections import *
+from mylib.models.images import *
+from mylib.models.collections import *
 
 """
 Add more methods below!!!

@@ -1,11 +1,13 @@
 from base import Base
+from app import db
 import uuid
+from datetime import datetime
 
 class Collection(Base):
-    __tablename__ = 'images'
+    __tablename__ = 'collections'
     
-    id             = db.Column(db.Integer, unique=True, primary_key=True)
-    title          = db.Column(db.String(), nullable=False)
+    id             = db.Column(db.String, unique=True, primary_key=True)
+    title          = db.Column(db.String, nullable=False)
     images         = db.relationship('Image', backref='collections', lazy=True)
     
     def __init__(self, title):

@@ -1,2 +1,2 @@
-from app.base import *
-from app.mylib.models.all import *
+from base import *
+from mylib.models.all import *

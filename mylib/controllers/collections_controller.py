@@ -1,17 +1,17 @@
-from app.constants import *
-from . import *
-from flask import request
-from app.mylib.models.all import *
-from app.mylib.models.images import *
-from app.mylib.models.collections import *
+from app import *
+from flask import request, jsonify
+from mylib.controllers import *
+from mylib.models.all import *
+from mylib.models.images import *
+from mylib.models.collections import *
 
 @mylib.route('/collections', methods=['POST'])
 def insert_collection():
-  title = request.args.get('title')
+    title = request.args.get('title')
 
-  collection = Collection(title)
-  db.session.add(collection)
-  db.session.commit()
+    collection = Collection(title)
+    db.session.add(collection)
+    db.session.commit()
 
-  return collection_schema.dump(collection).data
+    return jsonify(collection_schema.dump(collection).data)
 

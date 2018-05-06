@@ -1,5 +1,4 @@
 from flask import Blueprint
-from app import *
 
 # MyLib Blueprint
 mylib = Blueprint('mylib', __name__, url_prefix='/mylib')

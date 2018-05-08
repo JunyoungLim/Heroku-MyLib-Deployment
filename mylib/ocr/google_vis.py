@@ -4,8 +4,8 @@ from os.path import join, basename
 from sys import argv
 import json
 import requests
+from key import API_KEY
 
-API_KEY = "AIzaSyC1kVNuWAyXZUHXgNNGand_q02qubVD8U0"
 ENDPOINT_URL = 'https://vision.googleapis.com/v1/images:annotate'
 RESULTS_DIR = 'jsons'
 TEXT_DETECTION = 'TEXT_DETECTION'

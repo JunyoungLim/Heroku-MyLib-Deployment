@@ -1,15 +1,15 @@
 from base64 import b64encode
-from os import makedirs
+from os import makedirs, environ
 from os.path import join, basename
 from sys import argv
 import json
 import requests
-from key import API_KEY
 
 ENDPOINT_URL = 'https://vision.googleapis.com/v1/images:annotate'
 RESULTS_DIR = 'jsons'
 TEXT_DETECTION = 'TEXT_DETECTION'
 LABEL_DETECTION = 'LABEL_DETECTION'
+API_KEY = environ["GOOGLE_ML_API_KEY"]
 
 ###############################################################################
 # OCR module based on Google ML Vision API

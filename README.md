@@ -13,12 +13,12 @@ The initial attempt was implementing the OCR feature using pytesseract library. 
 While browsing internet, we bumped into the Google's ML API. Google was providing various API's, including the ones that supports OCR and Label detection from a given image. So, as the second attempt, we used Google's vision API to solve the OCR feature. We created a wrapper class that format the json file given a list of image uri's (and image byte-encoded string using base64 format) and retrieves outputs. Once these informations are extracted, we stored them into each image object, which will be used when a user wants to search a list of images with certain keyword, or query, that they put in the search bar. However, merely searching through the entire database is too time-expensive, so we implemented the third feature.
 
 ### Note
-If you want to deploy yourself after git cloning, make sure to export the following (i.e. .env):
+If you want to deploy yourself after git cloning, make sure to export the following:
 
 ```bash
-export APP_SETTINGS="config.DevelopmentConfig"
-export DATABASE_URL="postgresql://localhost/<Your Database Name Here>"
-export GOOGLE_ML_API_KEY="<Your API KEY Here>"
+$ export APP_SETTINGS="config.DevelopmentConfig"
+$ export DATABASE_URL="postgresql://localhost/<Your Database Name Here>"
+$ export GOOGLE_ML_API_KEY="<Your API KEY Here>"
 ```
 
 to the actual API_KEY you have with your Google Developer account for Google Vision API.
